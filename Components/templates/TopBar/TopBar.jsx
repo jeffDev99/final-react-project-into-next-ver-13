@@ -1,21 +1,22 @@
+"use client"
 import React, { useEffect, useState, startTransition } from "react";
 // icons
 import { SearchNormal1 } from "iconsax-react";
 // my import
-import { useGetMainProduct } from "../../../services/product";
+import { useGetMainProduct } from "@/services/product";
 // styles
 import styles from "./TopBar.module.css";
-import { useNavigate } from "react-router-dom";
-import { deleteCookie } from "../../../utils/config";
+import { useRouter } from "next/router";
+import { deleteCookie } from "@/utils/config";
 
 export default function TopBar() {
   const [search, setSearch] = useState("");
   const { data, refetch } = useGetMainProduct(search);
   const [isShowLogout, setIsShowLogout] = useState(false);
-  const navigate = useNavigate();
+  const router = useRouter();
   const logOutHandler = () => {
     deleteCookie("Token");
-    navigate("/");
+    router.push("/");
   };
 
   useEffect(() => {

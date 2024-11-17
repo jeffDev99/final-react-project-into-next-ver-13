@@ -39,10 +39,11 @@ export default function Home() {
                   onSuccess: (data) => {
                     console.log(data);
                     setCookies(data.data.token);
-                    toast.success("ورود شما با موفقیت انجام شد. تا لحظات دیگر به داشبورد منتقل میشوید", { duration: 3000 });
-                    setTimeout(() => {
-                      router.push("/dashboard")
-                    }, 3000);
+                    toast.success("ورود شما با موفقیت انجام شد. تا لحظات دیگر به داشبورد منتقل میشوید");
+                    router.push("/dashboard")
+                    // setTimeout(() => {
+                      
+                    // }, 2000);
                   },
                   onError: (err) => {
                     console.log(err);

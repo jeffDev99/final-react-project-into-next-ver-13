@@ -1,17 +1,13 @@
 import axios from "axios";
-import { getCookies } from "@/utils/config";
 const api = axios.create({
   baseURL: "http://localhost:3000",
   headers: {
     "Content-Type": "application/json",
   },
 });
+
 api.interceptors.request.use(
   (req) => {
-    const Token = getCookies("Token");
-    if (Token) {
-      req.headers["Authorization"] = `Bearer ${Token}`;
-    }
     return req;
   },
   (err) => {
