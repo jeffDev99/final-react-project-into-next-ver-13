@@ -11,7 +11,7 @@ import { deleteCookie } from "@/utils/config";
 
 export default function TopBar() {
   const [search, setSearch] = useState("");
-  const { data, refetch } = useGetMainProduct(search);
+  const { data, refetch , isPending , isError , isFetched } = useGetMainProduct(search);
   const [isShowLogout, setIsShowLogout] = useState(false);
   const router = useRouter();
   const logOutHandler = () => {
@@ -28,6 +28,10 @@ export default function TopBar() {
     };
   }, [search]);
 
+  
+  if (data && data.data.lenght === 0) return <p>no product found for</p>;
+  if (isPending) return <p>Loading Products</p>;
+  
   return (
     <div className="flex relative justify-between bg-white px-[28px] py-3 rounded-2xl border border-semi-dark-gray ">
       <div className="flex items-center w-[80%]">
@@ -51,7 +55,7 @@ export default function TopBar() {
       </figure>
       {!!search && (
         <div className={styles.searchResult}>
-          {!data.data.data.length ? (
+          {isError ? (
             <ul>
               <li className="my-4">
                 <p>محصولی یافت نشد</p>

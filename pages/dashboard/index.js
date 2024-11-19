@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Edit, Setting3, Trash } from "iconsax-react";
 import { useGetProducts } from "@/services/product";
 import Modal from "@/Components/modules/Modal/Modal";
@@ -10,17 +9,17 @@ import Alert from "@/Components/modules/Alert/Alert";
 import DashboardLayout from "@/Layout/Dashboard/Dashboard";
 import styles from "./dashboard.module.css";
 
-export default function product() {
+export default function Product() {
   const [addModal, setAddModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [deleteAlert, setDeleteAlert] = useState(false);
   const [productInfo, setProductInfo] = useState("");
   const [activePage, setActivePage] = useState(1);
   const [limitPerPage, setLimitPerPage] = useState(5);
-  const { data, refetch } = useGetProducts(limitPerPage, activePage, setActivePage);
-  useEffect(() => {
-    refetch();
-  }, [activePage]);
+  const { data, refetch, isFetched, isError, isPending } = useGetProducts(limitPerPage, activePage);
+  if (data && data.data.length === 0) return <p>no product found for</p>;
+  if (isPending) return <p>Loading Products</p>;
+  if (isError) return <p>Error fetching Product , {isError.message}</p>;
   return (
     <>
       <DashboardLayout>
@@ -41,34 +40,36 @@ export default function product() {
             <div className="py-6">شناسه کالا</div>
             <div className="py-6 "></div>
           </div>
-          {data?.data?.map((i) => (
-            <div className={styles.tableBody} key={i.id}>
-              <div className="py-6 pr-10 "> {i.name}</div>
-              <div className="py-6">{i.quantity}</div>
-              <div className="py-6">{i.price}</div>
-              <div className="py-6">{i.id}</div>
-              <div className="py-6 ">
-                <button
-                  onClick={() => {
-                    setEditModal((prev) => !prev);
-                    setProductInfo({ id: i.id, name: i.name, quantity: i.quantity, price: i.price });
-                  }}
-                >
-                  <Edit size="20" color="#4ADE80" className="hover:drop-shadow" />
-                </button>
-                <button
-                  onClick={() => {
-                    setDeleteAlert((prev) => !prev);
-                    setProductInfo({ id: i.id });
-                  }}
-                >
-                  <Trash size="20" color="#F43F5E" className="hover:drop-shadow" />
-                </button>
+          {isFetched &&
+            data?.data?.map((i) => (
+              <div className={styles.tableBody} key={i.id}>
+                <div className="py-6 pr-10 "> {i.name}</div>
+                <div className="py-6">{i.quantity}</div>
+                <div className="py-6">{i.price}</div>
+                <div className="py-6">{i.id}</div>
+                <div className="py-6 ">
+                  <button
+                    onClick={() => {
+                      setEditModal((prev) => !prev);
+                      setProductInfo({ id: i.id, name: i.name, quantity: i.quantity, price: i.price });
+                    }}
+                  >
+                    <Edit size="20" color="#4ADE80" className="hover:drop-shadow" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setDeleteAlert((prev) => !prev);
+                      setProductInfo({ id: i.id });
+                    }}
+                  >
+                    <Trash size="20" color="#F43F5E" className="hover:drop-shadow" />
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
         <div className="flex justify-center items-center gap-3">
+          {console.log(data)}
           {(function (rows, i, len) {
             while (++i <= len) {
               const currentIndex = i;
@@ -78,14 +79,17 @@ export default function product() {
                   className={`border border-[#8D8D8D80] rounded-full w-[35px] h-[35px] flex items-center justify-center text-[#8D8D8D80] cursor-pointer ${
                     activePage === i ? "bg-blue !text-white" : ""
                   }`}
-                  onClick={() => setActivePage(currentIndex)}
+                  onClick={() => {
+                    setActivePage(currentIndex);
+                    refetch({ queryKey: ["products", limitPerPage, currentIndex] });
+                  }}
                 >
                   {i}
                 </div>
               );
             }
             return rows;
-          })([], 0, data.data.totalPages)}
+          })([], 0, data.totalPages)}
         </div>
         <Modal title="ایجاد محصول جدید" showModal={addModal} setShowModal={setAddModal}>
           <CreateProduct showModal={addModal} setShowModal={setAddModal} />

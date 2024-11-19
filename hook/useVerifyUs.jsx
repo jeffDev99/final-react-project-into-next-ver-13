@@ -11,8 +11,6 @@ export default function useVerifyUs() {
     if (typeof window !== undefined) {
       const token = getCookies("Token");
       setToken(token);
-      console.log(!token)
-      console.log(window.location.pathname)
       if (token) {
         api.defaults.headers["Authorization"] = `Bearer ${token}`;
       }

@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  purge: ['./components/**/*.{js,ts,jsx,tsx}', './pages/**/*.{js,ts,jsx,tsx}' , './Layout/**/*.{js,ts,jsx,tsx}'],
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],

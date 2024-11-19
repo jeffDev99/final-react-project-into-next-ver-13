@@ -1,3 +1,4 @@
+import { getCookies } from "@/utils/config";
 import axios from "axios";
 const api = axios.create({
   baseURL: "http://localhost:3000",
@@ -8,6 +9,10 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (req) => {
+    const Token = getCookies("Token");
+    if (Token) {
+      req.headers["Authorization"] = `Bearer ${Token}`;
+    }
     return req;
   },
   (err) => {
