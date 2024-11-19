@@ -38,7 +38,6 @@ export default function Register() {
               { username, password },
               {
                 onSuccess: (data) => {
-                  console.log(data);
                   toast.success("شما با موفقیت ثبت نام کردید. تا لحظاتی دیگر به صفحه ورود منتقل میشوید", { duration: 3000 });
                   setTimeout(() => {
                     router.push("/");

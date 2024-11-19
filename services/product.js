@@ -8,11 +8,11 @@ const useGetProducts = (limit, page, setActivePage) => {
       const response = await api.get(`/products?limit=${limit}&page=${page}`);
       return response.data;
     } catch (err) {
-      // if (err?.response?.status === 400) {
-      //   setActivePage(prev => prev - 1);
-      //   const response = await api.get(`/products?limit=${limit}&page=${page - 1}`);
-      //   return response.data;
-      // }
+      if (err?.response?.status === 400) {
+        setActivePage(prev => prev - 1);
+        const response = await api.get(`/products?limit=${limit}&page=${page - 1}`);
+        return response.data;
+      }
       throw err;
     }
   };

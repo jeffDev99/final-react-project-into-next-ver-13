@@ -16,9 +16,8 @@ export default function Product() {
   const [productInfo, setProductInfo] = useState("");
   const [activePage, setActivePage] = useState(1);
   const [limitPerPage, setLimitPerPage] = useState(5);
-  const { data, refetch, isFetched, isError, isPending } = useGetProducts(limitPerPage, activePage);
+  const { data, refetch, isFetched, isError, isPending } = useGetProducts(limitPerPage, activePage, setActivePage);
   if (data && data.data.length === 0) return <p>no product found for</p>;
-  if (isPending) return <p>Loading Products</p>;
   if (isError) return <p>Error fetching Product , {isError.message}</p>;
   return (
     <>
@@ -32,65 +31,71 @@ export default function Product() {
             افزودن محصول
           </button>
         </div>
-        <div className={styles.table}>
-          <div className={styles.tableThead}>
-            <div className="py-6 pr-10 ">نام کالا</div>
-            <div className="py-6">موجودی</div>
-            <div className="py-6">قیمت</div>
-            <div className="py-6">شناسه کالا</div>
-            <div className="py-6 "></div>
-          </div>
-          {isFetched &&
-            data?.data?.map((i) => (
-              <div className={styles.tableBody} key={i.id}>
-                <div className="py-6 pr-10 "> {i.name}</div>
-                <div className="py-6">{i.quantity}</div>
-                <div className="py-6">{i.price}</div>
-                <div className="py-6">{i.id}</div>
-                <div className="py-6 ">
-                  <button
-                    onClick={() => {
-                      setEditModal((prev) => !prev);
-                      setProductInfo({ id: i.id, name: i.name, quantity: i.quantity, price: i.price });
-                    }}
-                  >
-                    <Edit size="20" color="#4ADE80" className="hover:drop-shadow" />
-                  </button>
-                  <button
-                    onClick={() => {
-                      setDeleteAlert((prev) => !prev);
-                      setProductInfo({ id: i.id });
-                    }}
-                  >
-                    <Trash size="20" color="#F43F5E" className="hover:drop-shadow" />
-                  </button>
-                </div>
+        {isPending ? (
+         <div className="w-full flex justify-center items-center"> <span class="loader"></span></div>
+        ) : (
+          <>
+            <div className={styles.table}>
+              <div className={styles.tableThead}>
+                <div className="py-6 pr-10 ">نام کالا</div>
+                <div className="py-6">موجودی</div>
+                <div className="py-6">قیمت</div>
+                <div className="py-6">شناسه کالا</div>
+                <div className="py-6 "></div>
               </div>
-            ))}
-        </div>
-        <div className="flex justify-center items-center gap-3">
-          {console.log(data)}
-          {(function (rows, i, len) {
-            while (++i <= len) {
-              const currentIndex = i;
-              rows.push(
-                <div
-                  key={i}
-                  className={`border border-[#8D8D8D80] rounded-full w-[35px] h-[35px] flex items-center justify-center text-[#8D8D8D80] cursor-pointer ${
-                    activePage === i ? "bg-blue !text-white" : ""
-                  }`}
-                  onClick={() => {
-                    setActivePage(currentIndex);
-                    refetch({ queryKey: ["products", limitPerPage, currentIndex] });
-                  }}
-                >
-                  {i}
-                </div>
-              );
-            }
-            return rows;
-          })([], 0, data.totalPages)}
-        </div>
+              {isFetched &&
+                data?.data?.map((i) => (
+                  <div className={styles.tableBody} key={i.id}>
+                    <div className="py-6 pr-10 "> {i.name}</div>
+                    <div className="py-6">{i.quantity}</div>
+                    <div className="py-6">{i.price}</div>
+                    <div className="py-6">{i.id}</div>
+                    <div className="py-6 ">
+                      <button
+                        onClick={() => {
+                          setEditModal((prev) => !prev);
+                          setProductInfo({ id: i.id, name: i.name, quantity: i.quantity, price: i.price });
+                        }}
+                      >
+                        <Edit size="20" color="#4ADE80" className="hover:drop-shadow" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          setDeleteAlert((prev) => !prev);
+                          setProductInfo({ id: i.id });
+                        }}
+                      >
+                        <Trash size="20" color="#F43F5E" className="hover:drop-shadow" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+            </div>
+            <div className="flex justify-center items-center gap-3">
+              {(function (rows, i, len) {
+                while (++i <= len) {
+                  const currentIndex = i;
+                  rows.push(
+                    <div
+                      key={i}
+                      className={`border border-[#8D8D8D80] rounded-full w-[35px] h-[35px] flex items-center justify-center text-[#8D8D8D80] cursor-pointer ${
+                        activePage === i ? "bg-blue !text-white" : ""
+                      }`}
+                      onClick={() => {
+                        setActivePage(currentIndex);
+                        refetch({ queryKey: ["products", limitPerPage, currentIndex] });
+                      }}
+                    >
+                      {i}
+                    </div>
+                  );
+                }
+                return rows;
+              })([], 0, data.totalPages)}
+            </div>
+          </>
+        )}
+
         <Modal title="ایجاد محصول جدید" showModal={addModal} setShowModal={setAddModal}>
           <CreateProduct showModal={addModal} setShowModal={setAddModal} />
         </Modal>

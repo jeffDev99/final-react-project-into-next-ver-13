@@ -37,7 +37,6 @@ export default function Home() {
                 { username, password },
                 {
                   onSuccess: (data) => {
-                    console.log(data);
                     setCookies(data.data.token);
                     toast.success("ورود شما با موفقیت انجام شد. تا لحظات دیگر به داشبورد منتقل میشوید");
                     router.push("/dashboard")
@@ -46,7 +45,6 @@ export default function Home() {
                     // }, 2000);
                   },
                   onError: (err) => {
-                    console.log(err);
                     toast.error("نام کاربری یا رمز عبور اشتباه است");
                     setValue("username", "");
                     setValue("password", "");
